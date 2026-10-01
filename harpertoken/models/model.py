@@ -83,11 +83,11 @@ class CMAESAgent(ModelHubMixin):
         model_id: str,
         revision: Optional[str],
         cache_dir: Optional[Union[str, Path]],
-        force_download: bool,
-        proxies: Optional[Dict],
-        resume_download: Optional[bool],
-        local_files_only: bool,
-        token: Optional[Union[str, bool]],
+        force_download: bool = False,
+        proxies: Optional[Dict] = None,
+        resume_download: Optional[bool] = None,
+        local_files_only: bool = False,
+        token: Optional[Union[str, bool]] = None,
         **model_kwargs,
     ) -> "CMAESAgent":
         """Load model weights"""
