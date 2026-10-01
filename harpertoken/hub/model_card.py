@@ -20,30 +20,47 @@ else:
 
 # Create model card with metadata
 card_data = ModelCardData(
-    language='en',
-    license='mit',
-    library_name='custom',
-    pipeline_tag='reinforcement-learning',
-    datasets=['gymnasium/CartPole-v1'],
-    tags=['cma-es', 'cartpole', 'evolutionary-strategy', 'gymnasium'],
-    repo='https://huggingface.co/harpertoken/pole',
+    language="en",
+    license="mit",
+    library_name="custom",
+    pipeline_tag="reinforcement-learning",
+    datasets=["gymnasium/CartPole-v1"],
+    tags=["cma-es", "cartpole", "evolutionary-strategy", "gymnasium"],
+    repo="https://huggingface.co/harpertoken/pole",
 )
 
 # Create and populate the model card
-card = ModelCard("""\
+card = ModelCard(
+    """\
 # pole
 
 A linear policy for `CartPole-v1`, found by covariance matrix adaptation evolution strategy. The policy is a single 4-by-2 matrix of weights mapping the four-dimensional observation — cart position, cart velocity, pole angle, pole angular velocity — to a score for each of the two actions, with the larger score taken. Eight numbers in total.
 
 Evaluating `model.npy` over 100 episodes, resetting with seeds 0 through 99, the mean episode length is 500.00 with a standard deviation of 0.00; all 100 episodes reach the environment's 500-step ceiling. Since 500 is the maximum reward `CartPole-v1` permits, this is the ceiling rather than a measured score against a baseline, and there is nothing further to optimise.
 
-The repository contains three representations of a solution and they are not identical. `model.npy` is the one that achieves the result above and is the one to use. It is stored flat, as eight float64 values; the matrix form is `reshape(4, 2)`, which the previous version of this card did not say and which its example code got wrong by treating the file as a matrix directly. `cmaes_model.npy` and `cmaes_model.pth` hold the CMA-ES state — weights, a recorded fitness of 500.0, and the intended shape — but they describe a different weight vector. Measured over the same 100 episodes that vector averages 498.99 with a standard deviation of 5.93, touching 500 in 96 episodes and falling as low as 451. The recorded fitness of 500.0 is therefore slightly optimistic relative to what these weights actually do, and the two files should not be treated as interchangeable. Both `.npy` and `.pth` require `allow_pickle=True` / a permissive load to read.
+The repository contains several representations of a solution and they are not identical. `weights.npy` and `model.safetensors` hold the same numbers as `model.npy`, in the two containers described under Loading; `metadata.json` accompanies them and describes the environment. `model.npy` is the one that achieves the result above and is the one to use. It is stored flat, as eight float64 values; the matrix form is `reshape(4, 2)`, which the previous version of this card did not say and which its example code got wrong by treating the file as a matrix directly. `cmaes_model.npy` and `cmaes_model.pth` hold the CMA-ES state — weights, a recorded fitness of 500.0, and the intended shape — but they describe a different weight vector. Measured over the same 100 episodes that vector averages 498.99 with a standard deviation of 5.93, touching 500 in 96 episodes and falling as low as 451. The recorded fitness of 500.0 is therefore slightly optimistic relative to what these weights actually do, and the two files should not be treated as interchangeable. Both `.npy` and `.pth` require `allow_pickle=True` / a permissive load to read.
 
-No Python code is included. The earlier card showed a `CMAESAgent` class and imported it `from model`, and referenced a `model_weights.npy`; neither the module nor that filename has existed in this repository. What is here is the weight arrays, a convergence figure under `assets/`, and a short video of the policy running.
+No Python class is defined in this repository. The earlier card showed a `CMAESAgent` class and imported it `from model`, and referenced a `model_weights.npy`; neither that module nor that filename has existed here. The `CMAESAgent` class lives in the separate [`coccinella-labs/rl`](https://github.com/coccinella-labs/rl) package, which declares this repository as its model and loads `weights.npy` with `metadata.json` through `CMAESAgent.from_pretrained`. What is here is the weight arrays, the transformers container, a convergence figure under `assets/`, and a short video of the policy running.
 
 The figure is worth reading rather than trusting. It plots two series over fifteen generations: best fitness, and mean fitness across the population. Best fitness starts near 140, rises above 440 at generation 1, dips to about 330 at generation 2, and reaches 500 at generation 3, after which it stays flat at the ceiling for the remaining twelve generations. Mean fitness climbs steadily from about 40 and only approaches 490 by generations 14 and 15, never touching 500. So the search found a ceiling-scoring policy almost immediately and then ran on regardless. The two weight files correspond to those two series: `model.npy` is the best individual found, while the CMA-ES state reflects the population as a whole, which is why the state's weights score just below 500 even though the best member reaches it.
 
-## Usage
+## Loading
+
+Two formats ship the same policy. `model.npy` is the flat numpy array, and `config.json` with `model.safetensors` is the same eight numbers in a transformers container, so `AutoModel.from_pretrained` can read them. The latter is a one-layer linear map, not a transformer. There are no attention blocks, because attending over four scalars has nothing to relate.
+
+With `transformers`:
+
+```python
+from transformers import AutoModel
+import harpertoken.models.hf_policy  # registers the architecture
+
+model = AutoModel.from_pretrained("harpertoken/pole")
+action = model.get_action(observation)   # observation is the 4-feature state
+```
+
+That scores 500.00 with a standard deviation of 0.00 over 100 episodes, identical to the numpy path, and its actions match `CMAESAgent` on every state tested. `torch` and `transformers` are an optional extra of the `rl` package (`pip install harpertoken-pole[hf]`); the numpy route below needs neither.
+
+With numpy only:
 
 ```python
 import numpy as np, gymnasium as gym
@@ -68,7 +85,8 @@ This solves one environment, from full state observation, with a policy class of
 ## Attribution
 
 CartPole-v1 is the classic control task from Barto, Sutton and Anderson, and the Gymnasium implementation is described in Towers et al., *Gymnasium: A Standard Interface for Reinforcement Learning Environments* (2024). CMA-ES follows Hansen, *The CMA Evolution Strategy: A Tutorial* (2016).
-""")
+"""
+)
 
 # Push to hub
 card.push_to_hub(REPO_ID)
