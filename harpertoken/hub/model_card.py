@@ -41,6 +41,8 @@ The repository contains three representations of a solution and they are not ide
 
 No Python code is included. The earlier card showed a `CMAESAgent` class and imported it `from model`, and referenced a `model_weights.npy`; neither the module nor that filename has existed in this repository. What is here is the weight arrays, a convergence figure under `assets/`, and a short video of the policy running.
 
+The figure is worth reading rather than trusting. It plots two series over fifteen generations: best fitness, and mean fitness across the population. Best fitness starts near 140, rises above 440 at generation 1, dips to about 330 at generation 2, and reaches 500 at generation 3, after which it stays flat at the ceiling for the remaining twelve generations. Mean fitness climbs steadily from about 40 and only approaches 490 by generations 14 and 15, never touching 500. So the search found a ceiling-scoring policy almost immediately and then ran on regardless. The two weight files correspond to those two series: `model.npy` is the best individual found, while the CMA-ES state reflects the population as a whole, which is why the state's weights score just below 500 even though the best member reaches it.
+
 ## Usage
 
 ```python
@@ -61,7 +63,7 @@ print(steps)
 
 ## Limitations
 
-This solves one environment, from full state observation, with a policy class of eight parameters. It does not transfer: change the dynamics, the observation space or the action space and the weights are meaningless, and there is no mechanism to relearn them. It says nothing in particular about linear policies in control — the earlier card claimed this result demonstrated that CartPole's optimal policy is approximately linear, which is a much broader claim than one successful parameter vector supports, and has been removed. `assets/training_convergence.png` plots mean fitness per generation; the search reached the ceiling within roughly three generations from a population of sixteen, which is unremarkable for a problem of this size and not evidence about CMA-ES in general.
+This solves one environment, from full state observation, with a policy class of eight parameters. It does not transfer: change the dynamics, the observation space or the action space and the weights are meaningless, and there is no mechanism to relearn them. It says nothing in particular about linear policies in control — the earlier card claimed this result demonstrated that CartPole's optimal policy is approximately linear, which is a much broader claim than one successful parameter vector supports, and has been removed. Reaching the ceiling by the third generation is unremarkable for a problem with eight parameters, and the figure shows no population size, so the earlier claim of a population of sixteen is unsupported by anything in this repository and has been dropped. Neither the figure nor the weights say anything about how CMA-ES behaves on problems that are not this small.
 
 ## Attribution
 
