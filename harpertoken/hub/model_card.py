@@ -85,9 +85,29 @@ This solves one environment, from full state observation, with a policy class of
 ## Attribution
 
 CartPole-v1 is the classic control task from Barto, Sutton and Anderson, and the Gymnasium implementation is described in Towers et al., *Gymnasium: A Standard Interface for Reinforcement Learning Environments* (2024). CMA-ES follows Hansen, *The CMA Evolution Strategy: A Tutorial* (2016).
-"""
+""",
+    card_data,
 )
 
-# Push to hub
-card.push_to_hub(REPO_ID)
+# huggingface_hub 2.1.1 renders the YAML frontmatter as an empty block even when
+# card_data carries the metadata, so push_to_hub would upload an empty block and
+# strip library, license and tags. Write the card ourselves with the metadata
+# rendered in front.
+import yaml  # noqa: E402
+
+rendered = str(card)
+if rendered.startswith("---\n{}\n---\n"):
+    front_matter = yaml.safe_dump(
+        card_data.to_dict(), sort_keys=False, default_flow_style=False
+    )
+    body = rendered.split("---\n", 2)[-1]
+    rendered = f"---\n{front_matter}---\n{body}"
+
+api.upload_file(
+    path_or_fileobj=rendered.encode(),
+    path_in_repo="README.md",
+    repo_id=REPO_ID,
+    repo_type="model",
+)
+print(f"Successfully pushed model card to {REPO_ID}")
 print(f"Successfully pushed model card to {REPO_ID}")
