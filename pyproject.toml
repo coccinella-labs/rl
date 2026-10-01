@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "harpertoken-cartpole"
+name = "harpertoken-pole"
 version = "0.1.0"
 description = "This model solves CartPole-v1 using CMA-ES with a linear policy."
 readme = "README.md"
@@ -52,6 +52,12 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "N"]
+
+[tool.ruff.lint.per-file-ignores]
+# model_card.py embeds the model card as a Markdown string. Paragraphs there are
+# deliberately kept on one line, as is conventional for Markdown, so the
+# line-length rule does not apply to it.
+"harpertoken/hub/model_card.py" = ["E501"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
