@@ -91,3 +91,27 @@ def test_pretrained_usage_syntax():
         assert result > 0  # Should perform well
     except Exception as e:
         pytest.skip(f"Syntax validation failed or model not available: {e}")
+
+
+class TestHFPolicySerialization:
+    """The transformers serialisation must be behaviourally identical."""
+
+    def test_flat_weight_round_trip(self):
+        pytest.importorskip("torch")
+        hf_policy = pytest.importorskip("harpertoken.models.hf_policy")
+        weights = np.arange(8, dtype=np.float64)
+        model = hf_policy.CmaesLinearPolicy.from_flat_weights(weights)
+        np.testing.assert_allclose(model.to_flat_weights(), weights)
+
+    def test_actions_match_cmaes_agent(self):
+        pytest.importorskip("torch")
+        hf_policy = pytest.importorskip("harpertoken.models.hf_policy")
+        pytest.importorskip("gymnasium")
+        agent = CMAESAgent("CartPole-v1")
+        rng = np.random.default_rng(0)
+        weights = rng.normal(size=8)
+        agent.weights = weights
+        model = hf_policy.CmaesLinearPolicy.from_flat_weights(weights)
+        for _ in range(200):
+            state = rng.normal(size=4).astype(np.float32)
+            assert agent.get_action(state) == model.get_action(state)

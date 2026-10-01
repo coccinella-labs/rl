@@ -30,7 +30,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
- dev = [
+# Needed only for harpertoken.models.hf_policy, which serialises the same
+# weights as config.json plus model.safetensors for AutoModel.from_pretrained.
+hf = [
+    "torch>=2.0",
+    "transformers>=4.40",
+]
+dev = [
      "pytest>=7.0.0",
      "pytest-asyncio>=0.21.0",
      "ruff>=0.1.0",

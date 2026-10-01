@@ -1,0 +1,12 @@
+{
+  "action_type": "discrete",
+  "architectures": [
+    "CmaesLinearPolicy"
+  ],
+  "dtype": "float32",
+  "env_name": "CartPole-v1",
+  "model_type": "cmaes_linear_policy",
+  "num_actions": 2,
+  "observation_space": 4,
+  "transformers_version": "5.18.0"
+}
