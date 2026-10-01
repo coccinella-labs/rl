@@ -11,7 +11,7 @@ def push_to_hub():
     api = HfApi()
 
     # Repository details
-    repo_id = "harpertoken/harpertoken-cartpole"
+    repo_id = "harpertoken/pole"
 
     try:
         # Create or get repository
@@ -106,7 +106,7 @@ This model implements a CartPole agent trained using the CMA-ES
 from harpertoken.models.model import CMAESAgent
 
 # Load the model
-agent = CMAESAgent.from_pretrained("harpertoken/harpertoken-cartpole")
+agent = CMAESAgent.from_pretrained("harpertoken/pole")
 
 # Evaluate
 mean_reward, std_reward = agent.evaluate(num_episodes=5)
@@ -136,7 +136,7 @@ The agent was trained using the CMA-ES algorithm with the following specificatio
   year = {{2024}},
   publisher = {{Hugging Face}},
   journal = {{Hugging Face Hub}},
-   howpublished = {{\\url{{https://huggingface.co/harpertoken/harpertoken-cartpole}}}}
+   howpublished = {{\\url{{https://huggingface.co/harpertoken/pole}}}}
 }}
 ```"""
 

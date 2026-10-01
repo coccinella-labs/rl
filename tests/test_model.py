@@ -64,9 +64,9 @@ def test_from_pretrained(tmp_path):
 def test_from_pretrained_hf():
     # Test loading from Hugging Face Hub
     # This test validates the syntax for loading a pretrained model
-    # Note: Requires model uploaded to HF under "harpertoken/harpertoken-cartpole"
+    # Note: Requires model uploaded to HF under "harpertoken/pole"
     try:
-        agent = CMAESAgent.from_pretrained("harpertoken/harpertoken-cartpole")
+        agent = CMAESAgent.from_pretrained("harpertoken/pole")
         assert agent.weights is not None
         assert agent.action_type == "discrete"
         assert agent.num_actions == 2
@@ -80,7 +80,7 @@ def test_pretrained_usage_syntax():
     try:
         from harpertoken.models.model import CMAESAgent
 
-        agent = CMAESAgent.from_pretrained("harpertoken/harpertoken-cartpole")
+        agent = CMAESAgent.from_pretrained("harpertoken/pole")
         from harpertoken.evaluation.test_model import test_model
 
         # Now call the exact syntax: test_model(agent, num_episodes=5)

@@ -38,7 +38,7 @@ dependencies = [
  ]
 
 [project.urls]
-HuggingFace = "https://huggingface.co/harpertoken/harpertoken-cartpole"
+HuggingFace = "https://huggingface.co/harpertoken/pole"
 
 [tool.setuptools.packages.find]
 where = ["."]

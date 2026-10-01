@@ -4,7 +4,7 @@ import os
 
 # Initialize Hugging Face API
 api = HfApi()
-REPO_ID = "harpertoken/harpertoken-cartpole"
+REPO_ID = "harpertoken/pole"
 
 # First, upload the convergence plot
 plot_path = "plots/training_convergence.png"
@@ -29,7 +29,7 @@ card_data = ModelCardData(
     model_name="CartPole-v1 CMA-ES Solution",
     developers="Niladri Das",
     model_type="Linear Policy",
-    repo="https://huggingface.co/harpertoken/harpertoken-cartpole",
+    repo="https://huggingface.co/harpertoken/pole",
 )
 
 # Create and populate the model card
@@ -67,7 +67,7 @@ This is a linear policy model for the CartPole-v1 environment that:
 
 ### Model Sources
 
-- **Repository:** https://huggingface.co/harpertoken/harpertoken-cartpole
+- **Repository:** https://huggingface.co/harpertoken/pole
 
 ## Uses
 
@@ -197,7 +197,7 @@ while True:
   year = {2024},
   publisher = {Hugging Face},
   journal = {Hugging Face Model Hub},
-  howpublished = {https://huggingface.co/harpertoken/harpertoken-cartpole}
+  howpublished = {https://huggingface.co/harpertoken/pole}
 }
 ```
 """
