@@ -23,7 +23,8 @@ card_data = ModelCardData(
     language="en",
     license="mit",
     library_name="custom",
-    pipeline_tag="reinforcement-learning",
+    # No pipeline_tag: reinforcement-learning is not a transformers pipeline
+    # task, so nothing resolves or serves it. The tag was decorative.
     datasets=["gymnasium/CartPole-v1"],
     tags=["cma-es", "cartpole", "evolutionary-strategy", "gymnasium"],
     repo="https://huggingface.co/harpertoken/pole",
